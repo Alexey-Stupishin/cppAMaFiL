@@ -2,50 +2,46 @@
 #include "mfoGlobals.h"
 
 #include "MagFieldOps.h"
-#include "NLFFFLinesTaskQueue.h"
+//#include "NLFFFLinesTaskQueue.h"
 #include "LinesTaskProcessor11.h"
 #include "LinesProcessor.h"
 #include "agmRKF45.h"
 
 #include "console_debug.h"
+#include "DebugWrite.h"
 
-__declspec(dllexport) uint32_t mfoGetLinesV(int *N,
-    CagmVectorField *v,
-    uint32_t _cond, REALTYPE_A chromoLevel,
-    REALTYPE_A *_seeds, int _Nseeds,
+__declspec(dllexport) uint32_t mfoGetLinesV(CagmVectorField *v,
+    uint32_t _cond, double chromoLevel,
+    double *_seeds, int _Nseeds, double relSeedsBound,
     int nProc,
-    REALTYPE_A step, REALTYPE_A tolerance, REALTYPE_A boundAchieve,
+    double step, double tolerance, double absBoundAchieve, double relBoundAchieve,
+    int _n_loop_control, double loop_abs_cell,
     int *_nLines, int *_nPassed,
-    int *_voxelStatus, REALTYPE_A *_physLength, REALTYPE_A *_avField, 
+    int *_voxelStatus, double *_physLength, double *_avField, 
     int *_linesLength, int *_codes,
     int *_startIdx, int *_endIdx, int *_apexIdx,
-    uint64_t _maxCoordLength, uint64_t *_totalLength, REALTYPE_A *_coords, uint64_t *_linesStart, int *_linesIndex, int *seedIdx)
+    uint64_t _maxCoordLength, uint64_t *_totalLength, double *_coords, uint64_t *_linesStart, int *_linesIndex, int *seedIdx, double *_times)
 {
     nProc = TaskQueueProcessor::getProcInfo(nProc);
-
-    uint32_t rc = 0;
+    nProc = _Nseeds > 0 ? (_Nseeds < nProc ? _Nseeds : nProc) : nProc;
+    TaskQueueProcessor proc(nProc);
 
     int maxResult = 50000;
 
     LQPTaskFactory factory;
-    LQPSupervisor *supervisor = new LQPSupervisor(N, v, _cond, chromoLevel,
-        _seeds, _Nseeds,
-        nProc,
-        step, tolerance, boundAchieve,
-        _nLines, _nPassed,
+    LQPSupervisor *supervisor = new LQPSupervisor(v, _cond, chromoLevel,
+        _seeds, _Nseeds, relSeedsBound,
         _voxelStatus, _physLength, _avField,
-        _linesLength, _codes,
+        _linesLength, _codes, _times,
         _startIdx, _endIdx, _apexIdx,
-        _maxCoordLength, _totalLength, _coords, _linesStart, _linesIndex, seedIdx, &factory);
-
-    TaskQueueProcessor proc;
+        _maxCoordLength, _coords, _linesStart, _linesIndex, seedIdx, &factory, proc.get_sync());
 
     std::vector<ATQPProcessor *> processors;
     for (int i = 0; i < nProc; i++)
         processors.push_back(new LQPProcessor(supervisor, i, v, 0, step, tolerance, 0
-            , boundAchieve, chromoLevel, maxResult, _voxelStatus));
+            , absBoundAchieve, relBoundAchieve, maxResult, _voxelStatus, proc.get_sync(), _n_loop_control, loop_abs_cell));
 
-    proc.proceed(processors, supervisor);
+    proc.proceed(processors, supervisor, w_priority::low);
 
     console_debug("end of proceed")
 
@@ -60,10 +56,19 @@ __declspec(dllexport) uint32_t mfoGetLinesV(int *N,
 
     console_debug("end of assign")
 
-        for (int i = 0; i < nProc; i++)
+    for (int i = 0; i < nProc; i++)
         delete processors[i];
 
     console_debug("processors deleted")
+
+    DebugWriteData(v, "debug_lines_field");
+    DebugWriteLines(v, "debug_lines", 
+        _seeds, _Nseeds,
+        supervisor->queue->nLines, supervisor->queue->nPassed,
+        _voxelStatus, _physLength, _avField, 
+        _linesLength, _codes,
+        _startIdx, _endIdx, _apexIdx,
+        supervisor->queue->cumLength, _coords, _linesStart, _linesIndex, seedIdx);
 
     delete supervisor;
 
@@ -73,32 +78,73 @@ __declspec(dllexport) uint32_t mfoGetLinesV(int *N,
 }
 
 __declspec(dllexport) uint32_t mfoGetLines(int *N,
-    REALTYPE_A *Bx, REALTYPE_A *By, REALTYPE_A *Bz,
-    uint32_t conditions, REALTYPE_A chromo_level,
-    REALTYPE_A *seeds, int Nseeds,
+    double *Bx, double *By, double *Bz,
+    uint32_t conditions, double chromo_level,
+    double *seeds, int Nseeds, double relSeedsBound,
     int nProc,
-    REALTYPE_A step, REALTYPE_A tolerance, REALTYPE_A toleranceBound,
+    double step, double tolerance, double absBoundAchieve, double relBoundAchieve,
+    int _n_loop_control, double loop_abs_cell,
     int *nLines, int *nPassed,
-    int *status, REALTYPE_A *physLength, REALTYPE_A *avField, 
+    int *status, double *physLength, double *avField, 
     int *linesLength, int *codes,
     int *startIdx, int *endIdx, int *apexIdx,
-    uint64_t maxCoordLength, uint64_t *totalLength, REALTYPE_A *coord, uint64_t *linesStart, int *linesIndex, int *seedIdx)
+    uint64_t maxCoordLength, uint64_t *totalLength, double *coord, uint64_t *linesStart, int *linesIndex, int *seedIdx, double *times)
 {
     console_start();
 
-    CagmVectorField *v = new CagmVectorField(Bx, By, Bz, N);
+    CagmVectorField *v;
+    if (debug_input)
+        v = new CagmVectorField(N, Bx, By, Bz);
+    else
+        v = new CagmVectorField(N, Bx, By, Bz, true);
 
-    uint32_t rc = mfoGetLinesV(N,
-        v,
+    uint32_t rc = mfoGetLinesV(v,
         conditions, chromo_level,
-        seeds, Nseeds,
+        seeds, Nseeds, relSeedsBound, 
         nProc,
-        step, tolerance, toleranceBound,
+        step, tolerance, absBoundAchieve, relBoundAchieve,
+        _n_loop_control, loop_abs_cell,
         nLines, nPassed,
         status, physLength, avField,
         linesLength, codes,
         startIdx, endIdx, apexIdx,
-        maxCoordLength, totalLength, coord, linesStart, linesIndex, seedIdx);
+        maxCoordLength, totalLength, coord, linesStart, linesIndex, seedIdx, times);
+
+    delete v;
+
+    console_debug("vector box deleted")
+
+    return rc;
+}
+
+__declspec(dllexport) uint32_t mfoGetLinesP(int *N,
+    double *Bx, double *By, double *Bz,
+    double *seeds, int Nseeds,
+    int *nLines, int *nPassed,
+    int *status, double *physLength, double *avField, 
+    int *linesLength, int *codes,
+    int *startIdx, int *endIdx, int *apexIdx,
+    uint64_t maxCoordLength, uint64_t *totalLength, double *coord, uint64_t *linesStart, int *linesIndex, int *seedIdx, double *times)
+{
+    console_start();
+
+    CagmVectorField *v;
+    if (debug_input)
+        v = new CagmVectorField(N, Bx, By, Bz);
+    else
+        v = new CagmVectorField(N, Bx, By, Bz, true);
+
+    uint32_t rc = mfoGetLinesV(v,
+        lines_conditions, lines_chromo_level,
+        seeds, Nseeds, lines_rel_seeds_bound, 
+        CommonThreadsN,
+        lines_step, lines_tolerance, lines_abs_bound_achieve, lines_rel_bound_achieve,
+        lines_n_loop_control, lines_loop_abs_cell,
+        nLines, nPassed,
+        status, physLength, avField,
+        linesLength, codes,
+        startIdx, endIdx, apexIdx,
+        maxCoordLength, totalLength, coord, linesStart, linesIndex, seedIdx, times);
 
     delete v;
 

@@ -14,21 +14,35 @@
     <ClCompile Include="..\..\Common\BaseMath\agmRKF45.cpp" />
     <ClCompile Include="..\..\Common\BaseMath\agmScalarField.cpp" />
     <ClCompile Include="..\..\Common\BaseMath\agmScalarFieldOps.cpp" />
+    <ClCompile Include="..\..\Common\BaseMath\agmScalarFieldOpsPoint.cpp" />
     <ClCompile Include="..\..\Common\BaseMath\agmVectorField.cpp" />
+    <ClCompile Include="..\..\Common\BaseMath\agmVectorFieldFIA.cpp" />
     <ClCompile Include="..\..\Common\BaseMath\agmVectorFieldOps.cpp" />
     <ClCompile Include="..\..\Common\BaseMath\agmVectorFieldOpsLine.cpp" />
-    <ClCompile Include="..\..\Common\BasePhysics\agpWiegelmann.cpp" />
+    <ClCompile Include="..\..\Common\BaseMath\agmVectorFieldOpsPoint.cpp" />
     <ClCompile Include="..\..\Common\Multithread\TaskQueueProcessor.cpp" />
+    <ClCompile Include="..\..\Common\Multithread\TaskQueueProcessorProcessor.cpp" />
+    <ClCompile Include="..\..\Common\Multithread\TaskQueueProcessorSupervisor.cpp" />
+    <ClCompile Include="..\..\Common\Multithread\TaskQueueProcessorSynchro.cpp" />
+    <ClCompile Include="..\..\Common\Multithread\TaskQueueProcessorTasks.cpp" />
+    <ClCompile Include="..\..\Common\Multithread\TaskQueueProcessorUnitTests.cpp" />
+    <ClCompile Include="..\..\Common\Utils\availMem.cpp" />
     <ClCompile Include="..\..\Common\Utils\binUtilities.cpp" />
     <ClCompile Include="..\..\Common\Utils\console_debug.cpp" />
     <ClCompile Include="..\..\Common\Utils\string_ex.cpp" />
+    <ClCompile Include="..\..\Common\WinUtils\WndDebug.cpp" />
+    <ClCompile Include="..\sources\agpWiegelmannPar.cpp" />
+    <ClCompile Include="..\sources\DebugWrite.cpp" />
     <ClCompile Include="..\sources\LinesProcessor.cpp" />
     <ClCompile Include="..\sources\MagFieldOps.cpp" />
+    <ClCompile Include="..\sources\mfoDisambig.cpp" />
+    <ClCompile Include="..\sources\mfoDisambigInterface.cpp" />
     <ClCompile Include="..\sources\mfoGetLine.cpp" />
     <ClCompile Include="..\sources\mfoGlobals.cpp" />
-    <ClCompile Include="..\sources\mfoNLFFFSample.cpp" />
+    <ClCompile Include="..\sources\mfoWrapperCore.cpp" />
+    <ClCompile Include="..\sources\mfoWrapperIDL.cpp" />
     <ClCompile Include="..\sources\WiegelmannProcedure.cpp" />
-    <ClCompile Include="..\sources\WiegelmannProcessor2.cpp" />
+    <ClCompile Include="..\sources\WProcCore.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MagFieldOps.rc" />
@@ -67,12 +81,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)..\..\..\..\Obj50D64\$(ProjectName)\$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)..\..\..\Obj50D64\$(ProjectName)\$(Configuration)\</OutDir>
     <IntDir>$(OutDir)</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(ProjectDir)..\..\..\..\Obj50R64\$(ProjectName)\$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)..\..\..\Obj50R64\$(ProjectName)\$(Configuration)\</OutDir>
     <IntDir>$(OutDir)</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -80,14 +94,14 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>DEBUG_CPP11THREAD_NON;_DEBUG_TRACE_NON;_DEBUG_TRACE2_NON;USE_UNIT_TEST;_MSVC_BUILD_NO;WIN32;_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\sources;..\..\common\BaseMath;..\..\common\BasePhysics;..\..\common\General;..\..\common\IDL;..\..\common\Multithread;..\..\common\Utils</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG_DATA_TRACE;NDEBUG_CPP11THREAD;NUSE_UNIT_TEST;WIN32;_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;..\sources;..\..\common\BaseMath;..\..\common\BasePhysics;..\..\common\General;..\..\common\IDL;..\..\common\Multithread;..\..\common\Utils;..\..\common\WinUtils</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>.\MagFieldOps.def</ModuleDefinitionFile>
-      <OutputFile>$(ProjectDir)..\..\ProgramD64\WWNLFFFReconstruction$(TargetExt)</OutputFile>
+      <OutputFile>$(ProjectDir)..\..\..\ProgramD64\WWNLFFFReconstruction$(TargetExt)</OutputFile>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;version.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Profile>true</Profile>
     </Link>
@@ -108,8 +122,8 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_MSVC_BUILD;WIN32;_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\sources;..\..\common\BaseMath;..\..\common\BasePhysics;..\..\common\General;..\..\common\IDL;..\..\common\Multithread;..\..\common\Utils</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG_CPP11THREAD;WIN32;_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;..\sources;..\..\common\BaseMath;..\..\common\BasePhysics;..\..\common\General;..\..\common\IDL;..\..\common\Multithread;..\..\common\Utils;..\..\common\WinUtils</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>

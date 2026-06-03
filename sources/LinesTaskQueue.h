@@ -15,30 +15,31 @@ protected:
     CagmVectorFieldOps *field;
     int NF[3];
 
-    REALTYPE_A chromoLevel;
+    double chromoLevel;
     uint32_t cond;
 
     uint64_t maxCoordLength;
 
-    REALTYPE_A coordTol;
-    REALTYPE_A closedTol;
+    double coordTol;
+    double closedTol;
 
     // Caller allocated!
     // length = Nseeds, 1-D
-    REALTYPE_A *physLength, *avField;
+    double *physLength, *avField;
     int *startIdx, *endIdx, *apexIdx;
     int *codes;
+    double *times;
     int *voxelStatus;
 
     // length = maxCoordLength x 3, 2-D
-    REALTYPE_A *coords;
+    double *coords;
     // length = Nseeds, 1-D
     int *linesLength;
     uint64_t *linesStart;
     int *linesIndex;
     int *seedIdx;
 
-    REALTYPE_A *distance;
+    double *distance;
 
     int *passed;
 
@@ -52,14 +53,13 @@ public:
     int nNonStored;
 
 public:
-    CLinesTaskQueue(int _nTasks, CagmVectorFieldOps *_field,
-        uint32_t _cond = 0x3, REALTYPE_A _chromoLevel = 0,
-        REALTYPE_A *_physLength = nullptr, REALTYPE_A *_avField = nullptr,
-        int *_voxelStatus = nullptr, int *_codes = nullptr,
+    CLinesTaskQueue(CagmVectorFieldOps *_field,
+        uint32_t _cond = 0x3, double _chromoLevel = 0,
+        double *_physLength = nullptr, double *_avField = nullptr,
+        int *_voxelStatus = nullptr, int *_codes = nullptr, double *_times = nullptr,
         int *_startIdx = nullptr, int *_endIdx = nullptr, int *_apexIdx = nullptr,
         int maxResult = 50000,
-        uint64_t _maxCoordLength = 0, int *_linesLength = nullptr, REALTYPE_A *_coords = nullptr, uint64_t *_linesStart = nullptr, int *_linesIndex = nullptr, int *_seedIdx = nullptr,
-        bool _bFixAffinity = false)
+        uint64_t _maxCoordLength = 0, int *_linesLength = nullptr, double *_coords = nullptr, uint64_t *_linesStart = nullptr, int *_linesIndex = nullptr, int *_seedIdx = nullptr)
         : 
         n(0)
         , field(_field)
@@ -68,6 +68,7 @@ public:
         , maxCoordLength(_maxCoordLength)
         , linesLength(_linesLength)
         , codes(_codes)
+        , times(_times)
         , voxelStatus(_voxelStatus)
         , physLength(_physLength)
         , avField(_avField)
@@ -83,10 +84,11 @@ public:
         , closedTol(3e-3)
         , nPassed(0)
         , passed(nullptr)
+        , globalIdx(nullptr)
         , nLines(0)
         , nNonStored(0)
     {
-        distance = new REALTYPE_A[maxResult];
+        distance = new double[maxResult];
     }
 
     virtual ~CLinesTaskQueue()
@@ -99,7 +101,7 @@ public:
         return nQueue = _nQueue;
     }
 
-    virtual long NextQueueItem(int taskN = -1)
+    virtual long NextQueueItem()
     {
         if (n >= nQueue)
             return -1; //  ABaseTaskQueue::NoItems;
@@ -122,9 +124,9 @@ public:
             voxelStatus[idx] |= status;
     }
 
-    void getDivPoint(REALTYPE_A *p1, REALTYPE_A *p2)
+    void getDivPoint(double *p1, double *p2)
     {
-        REALTYPE_A t = (chromoLevel - p1[2])/(p2[2] - p1[2]);
+        double t = (chromoLevel - p1[2])/(p2[2] - p1[2]);
         p1[0] = p1[0] + t*(p2[0] - p1[0]);
         p1[1] = p1[1] + t*(p2[1] - p1[1]);
         p1[2] = chromoLevel;
@@ -138,7 +140,7 @@ public:
 #define FS_OUT  2
 #define FS_END  3
 
-    virtual uint32_t processLine(uint32_t queueID, REALTYPE_A *point, REALTYPE_A *result, int resLength, int _code, int _code4over)
+    virtual uint32_t processLine(uint32_t queueID, double *point, double *result, int resLength, int _code, int _code4over, double time)
     {
         if (voxelStatus)
             setVoxelStatus(queueID, Status::Processed, true);
@@ -156,14 +158,16 @@ public:
             avField[queueID] = 0;
         if (codes)
             codes[queueID] = 0;
+        if (times)
+            times[queueID] = time;
 
-        REALTYPE_A thisPhysLength = 0;
-        REALTYPE_A thisAvField = 0;
+        double thisPhysLength = 0;
+        double thisAvField = 0;
         if (resLength > 1) // && point[2] >= floor(chromoLevel))
         {
             int state = FS_VOID;
             // find fragment
-            int start, end;
+            int start = 0, end = 0;
             bool found = false;
             int kPoint = -1;
             for (int k = 0; k < resLength; k++)
@@ -231,13 +235,13 @@ public:
 
                     sClosed = (bStartClosed && bEndClosed ? Status::Closed : Status::None) | (bStartClosed != bEndClosed ? Status::OnlyFootpoint : Status::None);
 
-                    REALTYPE_A B0[3], B1[3], B, Bprev;
+                    double B0[3], B1[3], B, Bprev;
 
                     field->getPoint(result, B0);
                     distance[start] = 0;
 
                     int posmin = start;
-                    REALTYPE_A Blng = 0, Bmin = d_snorm(B0);
+                    double Blng = 0, Bmin = d_snorm(B0);
                     Bprev = d_snorm(B0);
                     for (int k = start + 1; k <= end; k++)
                     {
@@ -248,7 +252,7 @@ public:
                             Bmin = B;
                             posmin = k;
                         }
-                        REALTYPE_A step = d_sdist(result + 3 * k, result + 3 * (k - 1));
+                        double step = d_sdist(result + 3 * k, result + 3 * (k - 1));
                         distance[k] = distance[k - 1] + step;
                         Blng += (Bprev + B)*0.5*step;
 
@@ -295,7 +299,7 @@ public:
                             for (int k = start; k <= end; k++)
                             {
                                 uint64_t gpos = 4 * (cumLength + k - start);
-                                memcpy(coords + gpos, result + 3 * k, 3 * sizeof(REALTYPE_A));
+                                memcpy(coords + gpos, result + 3 * k, 3 * sizeof(double));
                                 coords[gpos + 3] = distance[k] - distance[posmin];
                             }
 
@@ -324,7 +328,7 @@ public:
         return (kz*NF[1] + ky)*NF[0] + kx;
     }
 
-    int getGlobalID(REALTYPE_A x, REALTYPE_A y, REALTYPE_A z)
+    int getGlobalID(double x, double y, double z)
     {
         int kx = (int)floor(x);
         int ky = (int)floor(y);
@@ -333,12 +337,12 @@ public:
         return getGlobalID(kx, ky, kz);
     }
 
-    int getGlobalID(REALTYPE_A *coord)
+    int getGlobalID(double *coord)
     {
         return getGlobalID(coord[0], coord[1], coord[2]);
     }
 
-    uint32_t proceedThisVox(int queueID, int sClosed, REALTYPE_A thisPhysLength, REALTYPE_A thisAvField, int apexid, int seedid, int startid, int endid)
+    uint32_t proceedThisVox(int queueID, int sClosed, double thisPhysLength, double thisAvField, int apexid, int seedid, int startid, int endid)
     {
         if (voxelStatus)
             setVoxelStatus(queueID, Status::Processed | Status::Lined | sClosed);
@@ -362,7 +366,7 @@ public:
         return 0;
     }
 
-    uint32_t proceedVox(REALTYPE_A *coord, int /* queueID */, int sClosed, REALTYPE_A thisPhysLength, REALTYPE_A thisAvField, int apexid, int seedid, int startid, int endid)
+    uint32_t proceedVox(double *coord, int /* queueID */, int sClosed, double thisPhysLength, double thisAvField, int apexid, int seedid, int startid, int endid)
     {
         int gidx = getGlobalID(coord);
 
@@ -378,8 +382,8 @@ public:
         return 0;
     }
 
-    uint32_t SetResult(uint32_t queueID, REALTYPE_A *point, REALTYPE_A *result, int resLength, int _code, int _code4over)
+    uint32_t SetResult(uint32_t queueID, double *point, double *result, int resLength, int _code, int _code4over, double time)
     {
-        return processLine(queueID, point, result, resLength, _code, _code4over);
+        return processLine(queueID, point, result, resLength, _code, _code4over, time);
     }
 };

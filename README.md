@@ -1,33 +1,35 @@
-# Magnetic-Field library
+# Advanced Magnetic Field library
 
-See [Licence](https://github.com/Alexey-Stupishin/Magnetic-Field_Library/blob/master/LICENCE.md)
+See [Licence](https://github.com/Alexey-Stupishin/AMaFiL/blob/master/LICENCE.md)
 
-[doi:10.5281/zenodo.3896222](https://zenodo.org/record/3896222)
+<!--- [doi:10.5281/zenodo.3896222](https://zenodo.org/record/3896222) --->
 
 The repository contains:
 * sources of Magnetic Field Library (C++11)
 * Windows .dll
 * projects for build under Windows and Linux
-* wrappers for IDL calls
-* wrappers for Python calls
 
 ## Dependencies
-IDL wrappers are designed to be used as subpackage of [GX-simulator](https://github.com/Gelu-Nita/GX_SIMULATOR) package, which included in [Solar Soft](http://www.lmsal.com/solarsoft/sswdoc/sswdoc_jtop.html) environment.
 
-This repository contains submodule [common](https://github.com/Alexey-Stupishin/Common). Working with submodules can be found [here](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
+Wrappers for the library are implemented in:
+* IDL ([idlAMaFiL](https://github.com/Alexey-Stupishin/idlAMaFiL)). idlAMaFiL used as submodule of [GX-simulator](https://github.com/Gelu-Nita/GX_SIMULATOR) package, which included in [Solar Soft](http://www.lmsal.com/solarsoft/sswdoc/sswdoc_jtop.html) environment.
+* Python ([pyAMaFiL](https://github.com/Alexey-Stupishin/pyAMaFiL)). Porting to the ([pyAMPP](https://github.com/suncast-org/pyAMPP)) in progress.
+
+This repository contains submodule [CPP-Common](https://github.com/Alexey-Stupishin/CPP-Common).
+
+Working with submodules can be found [here](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
 
 ## Routines
 * _/binaries/WWNLFFFReconstruction.dll_ - Calculation library for Windows
-* _/idl/gx_box_calculate_lines.pro_ - IDL wrapper to calculate magnetic field lines (see comments in the function)
-* _/idl/gx_box_make_nlfff_wwas_field.pro_ - IDL wrapper to reconstruct non-linear force-free magnetic field (NLFFF) by T.Wiegelmann (weighted) method  (see comments in the function)
-* _/idl/gx_box_field_library_version.pro_ - IDL wrapper to get library version info  (see comments in the function)
-* _/python/ASMagLibPy/MagFieldWrapper.py_ - Python class wrapper to WWNLFFF library functions
 * _/sources_ - source codes (C++11)
 * _/Windows_ - MSVC project for Windows (Visual Studio 2015)
 * _/Linux_ - makefile (g++) for Linux
 
-For NLFFF Weighted method please refer to:
-Wiegelmann, T. Optimization code with weighting function for the reconstruction of coronal magnetic fields. _Solar Phys_., 2004, __219__, 87–108. ([doi:10.1023/B:SOLA.0000021799.39465.36](https://link.springer.com/article/10.1023/B:SOLA.0000021799.39465.36), [ADS:2004SoPh..219...87W](https://ui.adsabs.harvard.edu/abs/2004SoPh..219...87W/abstract), [arXiv:0802.0124](https://arxiv.org/abs/0802.0124))
+see [Changelog](https://github.com/Alexey-Stupishin/AMaFiL/blob/master/CHANGELOG.md) for history update
+
+## References
+For NLFFF weighted method please refer to:
+Wiegelmann, T. Optimization code with weighting function for the reconstruction of coronal magnetic fields. _Solar Phys_., 2004, __219__, 87108. ([doi:10.1023/B:SOLA.0000021799.39465.36](https://link.springer.com/article/10.1023/B:SOLA.0000021799.39465.36), [ADS:2004SoPh..219...87W](https://ui.adsabs.harvard.edu/abs/2004SoPh..219...87W/abstract), [arXiv:0802.0124](https://arxiv.org/abs/0802.0124))
 
 Some proves and using of this library can be found in:
 
@@ -35,34 +37,10 @@ Fleishman, G., Anfinogentov, S., Loukitcheva, M., Mysh'yakov, I., Stupishin, A. 
 
 Stupishin, A., Kaltman, T., Bogod, V., Yasnov, L. Modeling of Solar Atmosphere Parameters Above Sunspots Using RATAN-600 Microwave Observations. _Solar Phys_, 2018, __293__, 13 ([doi:10.1007/s11207-017-1228-7](https://link.springer.com/article/10.1007/s11207-017-1228-7), [ADS:2018SoPh..293...13S](https://ui.adsabs.harvard.edu/abs/2018SoPh..293...13S/abstract))
 
-Anfinogentov, S., Stupishin, A., Mysh’yakov, I., Fleishman, G. Record-breaking Coronal Magnetic Field in Solar Active Region 12673. _ApJL_, 2019, __880__, L29 ([doi:10.3847/2041-8213/ab3042](https://iopscience.iop.org/article/10.3847/2041-8213/ab3042), [ADS:2019ApJ...880L..29A](https://ui.adsabs.harvard.edu/abs/2019ApJ...880L..29A/abstract), [arXiv:1907.06398](https://arxiv.org/abs/1907.06398))
+Anfinogentov, S., Stupishin, A., Myshyakov, I., Fleishman, G. Record-breaking Coronal Magnetic Field in Solar Active Region 12673. _ApJL_, 2019, __880__, L29 ([doi:10.3847/2041-8213/ab3042](https://iopscience.iop.org/article/10.3847/2041-8213/ab3042), [ADS:2019ApJ...880L..29A](https://ui.adsabs.harvard.edu/abs/2019ApJ...880L..29A/abstract), [arXiv:1907.06398](https://arxiv.org/abs/1907.06398))
 
-Fleishman, G., Mysh’yakov, I., Stupishin, A., Loukitcheva, M., Anfinogentov, S. Force-free Field Reconstructions Enhanced by Chromospheric Magnetic Field Data. _ApJ_, 2019, __870__, 101 ([doi:10.3847/1538-4357/aaf384](https://iopscience.iop.org/article/10.3847/1538-4357/aaf384), [ADS:2019ApJ...870..101F](https://ui.adsabs.harvard.edu/abs/2019ApJ...870..101F/abstract), [arXiv:1811.02093](https://arxiv.org/abs/1811.02093))
+Fleishman, G., Myshyakov, I., Stupishin, A., Loukitcheva, M., Anfinogentov, S. Force-free Field Reconstructions Enhanced by Chromospheric Magnetic Field Data. _ApJ_, 2019, __870__, 101 ([doi:10.3847/1538-4357/aaf384](https://iopscience.iop.org/article/10.3847/1538-4357/aaf384), [ADS:2019ApJ...870..101F](https://ui.adsabs.harvard.edu/abs/2019ApJ...870..101F/abstract), [arXiv:1811.02093](https://arxiv.org/abs/1811.02093))
 
 Fleishman, G., Anfinogentov, Stupishin, A., Kuznetsov, A., Nita, G. Coronal Heating Law Constrained by Microwave Gyroresonant Emission. _ApJ_, 2021, __909__, 89 ([doi:10.3847/1538-4357/abdab](https://iopscience.iop.org/article/10.3847/1538-4357/abdab1), [ADS:2021ApJ...909...89F](https://ui.adsabs.harvard.edu/abs/2021ApJ...909...89F/abstract), [arXiv:2101.03651](https://arxiv.org/abs/2101.03651))
 
 Gelu M. Nita, Gregory D. Fleishman, Alexey A. Kuznetsov, Sergey A. Anfinogentov, Alexey G. Stupishin, Eduard P. Kontar, Samuel J. Schonfeld, James A. Klimchuk, and Dale E. Gary. Data-constrained Solar Modeling with GX Simulator. _ApJSS_, 2023, __267__, 6 ([doi:10.3847/1538-4365/acd343](https://link.springer.com/article/10.1023/B:SOLA.0000021799.39465.36), [ADS:2023ApJS..267....6N](https://ui.adsabs.harvard.edu/abs/2023ApJS..267....6N/abstract), [arXiv:2301.00795](https://arxiv.org/abs/2301.00795))
-
-## Update History
-* 16 June 2020 - 1<sup>st</sup> release (v 2.1.20.428), [doi:10.5281/zenodo.3896223](https://zenodo.org/record/3896223#.Y13LRHZBxJQ)
-* 04 October 2020 (v 2.1.20.1004, rev.363): _weight_bound_size_ key added to _gx_box_make_nlfff_wwas_field.pro_, see comment inside
-* 25 January 2021 (v 2.2.21.125, rev.384): bug fixed (_extra parameters could prevent NLFFF in some cases)
-* 18 February 2021 (v 2.3.21.217, rev.392):
-	* bug fixed (it was crash when calculated with seeds)
-	* improvement (all lines calculated, even if seed below chromo_level); but only part above chromo_level is stored
-	* comment in _gx_box_calculate_lines.pro_ utility corrected, so that is less confusing
-* 16 October 2022 (v 2.4.22.1016, rev.625):
-	* small bug for short low loops fixed
-	* small lines wrapper correction
-	* Linux version started (at separate repository)
-* 30 October 2022 (v 3.4.22.1025, rev.626): 
-	* Major structure changes 
-	* Significant code reorganization for multiplatforming, change implementation to C++11 standard
-	* Linux version built
-* 23 August 2023
-	* Python wrapper
-* 30 August 2023 (v 3.4.23.745, rev.725): 
-	* Small polishing, version changed
-* 03 September 2023
-	* Python wrapper update
-* 04 December 2023 (v 3.4.23.1203, rev. 797) - One-footpoint-line status bit added

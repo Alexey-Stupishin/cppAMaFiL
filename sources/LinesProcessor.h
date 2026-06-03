@@ -1,6 +1,7 @@
 #pragma once
 
 #include "LinesTaskQueue11.h"
+#include "TimeTicToc.h"
 
 class CLinesTaskQueue;
 class CagmVectorField;
@@ -15,19 +16,19 @@ protected:
     CagmRKF45 *rkf45;
     CagmVectorField *v;
     int dir;
-    REALTYPE_A step;
-    REALTYPE_A boundAchieve, boundAchieveBottom;
+    double step;
+    double absBoundAchieve, relBoundAchieve;
     int maxLength;
     int *passed;
-    REALTYPE_A *coord;
-    REALTYPE_A *linesteps;
+    double *coord;
+    double *linesteps;
 
-    REALTYPE_A point[3];
+    double point[3];
 
     LQPSupervisor *supervisor;
 
 public:
-    CLinesProcessor(LQPSupervisor *, int, CagmVectorField *, int, REALTYPE_A, REALTYPE_A, REALTYPE_A, REALTYPE_A, REALTYPE_A, int, int *);
+    CLinesProcessor(LQPSupervisor *, CagmVectorField *, int, double, double, double, double, double, int, int *, int, double);
     virtual ~CLinesProcessor();
 
     virtual uint32_t setTaskParams(void * params);

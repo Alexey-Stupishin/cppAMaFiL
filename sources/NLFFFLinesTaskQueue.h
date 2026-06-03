@@ -5,9 +5,9 @@
 class CNLFFFLinesTaskQueue : public CLinesTaskQueue
 {
 protected:
-    REALTYPE_A *seeds;
+    double *seeds;
 
-    REALTYPE_A *params;
+    double *params;
 
 private:
     void parseGlobalIdx(int idx, int *kx, int *ky, int *kz)
@@ -35,38 +35,58 @@ private:
     }
 
 public:
-    CNLFFFLinesTaskQueue(int _nTasks, CagmVectorFieldOps *_field, REALTYPE_A *_seeds, int _Nseeds,
-        uint32_t _cond = 0x3, REALTYPE_A _chromoLevel = 0,
-        REALTYPE_A *_physLength = nullptr, REALTYPE_A *_avField = nullptr,
-        int *_voxelStatus = nullptr, int *_codes = nullptr,
+    CNLFFFLinesTaskQueue(CagmVectorFieldOps *_field, double *_seeds, int _Nseeds, double relSeedsBound = 0,
+        uint32_t _cond = 0x3, double _chromoLevel = 0,
+        double *_physLength = nullptr, double *_avField = nullptr,
+        int *_voxelStatus = nullptr, int *_codes = nullptr, double *_times = nullptr,
         int *_startIdx = nullptr, int *_endIdx = nullptr, int *_apexIdx = nullptr,
         int maxResult = 50000,
-        uint64_t _maxCoordLength = 0, int *_linesLength = nullptr, REALTYPE_A *_coords = nullptr, uint64_t *_linesStart = nullptr, int *_linesIndex = nullptr, int *seedIdx = nullptr,
-        bool _bFixAffinity = false)
-        : CLinesTaskQueue(_nTasks, _field, 
+        uint64_t _maxCoordLength = 0, int *_linesLength = nullptr, double *_coords = nullptr, uint64_t *_linesStart = nullptr, int *_linesIndex = nullptr, int *seedIdx = nullptr)
+        : CLinesTaskQueue(_field, 
             _cond, _chromoLevel,
             _physLength, _avField,
-            _voxelStatus, _codes, 
+            _voxelStatus, _codes, _times, 
             _startIdx, _endIdx, _apexIdx, maxResult,
-            _maxCoordLength, _linesLength, _coords, _linesStart, _linesIndex, seedIdx, _bFixAffinity)
+            _maxCoordLength, _linesLength, _coords, _linesStart, _linesIndex, seedIdx)
       , seeds(_seeds)
+      , params(nullptr)
     {
-        Nseeds = _Nseeds;
-        globalIdx = nullptr;
+        field->dimensions(NF);
+        autoParams = (_Nseeds <= 0 || !seeds);
 
-        autoParams = (Nseeds <= 0 || !seeds);
-        memcpy(NF, field->GetDimensions(), 3*sizeof(int));
-        int nVox = (autoParams ? NF[0]*NF[1]*NF[2] : Nseeds);
+        int from[3], to[3];
+        if (!autoParams)
+        {
+            Nseeds = _Nseeds;
+        }
+        else
+        {
+            from[0] = 0;
+            from[1] = 0;
+            from[2] = 0;
+            to[0] = NF[0]-1;
+            to[1] = NF[1]-1;
+            to[2] = NF[2]-1;
+            if (relSeedsBound > 0)
+            {
+                from[0] = (int)ceil(relSeedsBound*NF[0]);
+                to[0] = NF[0] - 1 - from[0];
+                from[1] = (int)ceil(relSeedsBound*NF[1]);
+                to[1] = NF[1] - 1 - from[1];
+                to[2] = NF[2] - 1 - (int)(ceil(relSeedsBound*NF[2]));
+                Nseeds = _Nseeds;
+            }
+            Nseeds = (to[0]-from[0]+1)*(to[1]-from[1]+1)*(to[1]-from[1]+1);
+            if (cond != Conditions::NoCond)
+                passed = new int[NF[0]*NF[1]*NF[2]];
+        }
 
-        InitQueue(nVox);
-
-        if (cond != Conditions::NoCond)
-            passed = new int[nVox];
+        InitQueue(Nseeds);
 
         if (!autoParams)
         {
-            globalIdx = new int[nVox];
-            params = new REALTYPE_A[3 * sizeof(REALTYPE_A) * nVox];
+            globalIdx = new int[Nseeds];
+            params = new double[3 * Nseeds];
             for (int id = 0; id < Nseeds; id++)
             {
                 InitOutput(id);
@@ -78,11 +98,11 @@ public:
         }
         else
         {
-            params = new REALTYPE_A[3 * sizeof(REALTYPE_A)];
+            params = new double[3];
 
-            for (int kz = 0; kz < NF[2]; kz++)
-                for (int ky = 0; ky < NF[1]; ky++)
-                    for (int kx = 0; kx < NF[0]; kx++)
+            for (int kz = from[2]; kz <= to[2]; kz++)
+                for (int ky = from[1]; ky <= to[1]; ky++)
+                    for (int kx = from[0]; kx <= to[0]; kx++)
                         InitOutput(getGlobalID(kx, ky, kz));
         }
     }

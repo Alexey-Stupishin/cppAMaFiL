@@ -10,11 +10,12 @@ protected:
     CLinesProcessor *w;
 
 public:
-    LQPProcessor(LQPSupervisor *supervisor, int _id, CagmVectorField *_v, int _dir, REALTYPE_A _step, REALTYPE_A _relErr, REALTYPE_A _absErr
-        , REALTYPE_A _boundAchieve, REALTYPE_A _boundAchieveBottom, int _maxLength, int *_passed) : ATQPProcessor(_id)
+    LQPProcessor(LQPSupervisor *supervisor, int _id, CagmVectorField *_v, int _dir, double _step, double _relErr, double _absErr
+        , double _absBoundAchieve, double _relBoundAchieve, int _maxLength, int *_passed, ATQPSynchonizer *_sync, int _n_loop_control, double loop_abs_cell)
+        : ATQPProcessor(_id, _sync)
     {
-        w = new CLinesProcessor(supervisor, _id, _v, _dir, _step, _relErr, _absErr
-            , _boundAchieve, _boundAchieveBottom, _maxLength, _passed);
+        w = new CLinesProcessor(supervisor, _v, _dir, _step, _relErr, _absErr
+            , _absBoundAchieve, _relBoundAchieve, _maxLength, _passed, _n_loop_control, loop_abs_cell);
     }
     virtual ~LQPProcessor()
     {

@@ -2,5 +2,8 @@
 *.sdf
 *.aps
 *.opendb
+*.user
+resource.h
 /.vs
 /Debug
+MagFieldOpsWork.vcxproj

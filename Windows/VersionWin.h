@@ -11,7 +11,8 @@
 #define VIR_FileDescriptionD VIR_CONC3_S(VIR_T_REV, VIR_Revision, VIR_T_LIBNAME)
 #define VIR_FileDescription VIR_QUOTE_SUBST(VIR_FileDescriptionD)
 
-#define VIR_LegalCopyrightD VIR_CONC2_S(VIR_COPYRIGHT, VIR_Year)
+//#define VIR_LegalCopyrightD VIR_CONC2_S(VIR_COPYRIGHT, VIR_Year)
+#define VIR_LegalCopyrightD VIR_CONC3_S(VIR_COPYRIGHT, VIR_FROM, VIR_Year)
 #define VIR_LegalCopyright VIR_QUOTE_SUBST(VIR_LegalCopyrightD)
 
 //-------------------------------------------------------------------------

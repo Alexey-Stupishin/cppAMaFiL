@@ -5,6 +5,9 @@
 #include <string>
 #include "agmScalarField.h"
 #include "agmVectorFieldOps.h"
+#include "TaskQueueProcessor.h"
+
+#define DEBUG_OUT_PATH "g:\\temp\\"
 
 #ifndef d_mfoglobaldefine
 #define d_mfoglobaldefineextern extern
@@ -12,11 +15,13 @@
 #define d_mfoglobaldefineextern
 #endif
 
-#define LIB_STATE_LIB_NOT_INIT              0x00010000
-#define LIB_STATE_NO_PARAMETER              0x00020000
+#define LIB_STATE_LIB_NOT_INIT              0x80010000
+#define LIB_STATE_NO_PARAMETER              0x80020000
 
-//d_mfoglobaldefineextern BWndDebug *debugtrace;
-//d_mfoglobaldefineextern BWndDebug *debugtrace2;
+#ifdef _WINDOWS
+#include "WndDebug.h"
+d_mfoglobaldefineextern BWndDebug *debugtrace;
+#endif
 
 d_mfoglobaldefineextern int gstcLibraryInit
 #ifdef d_mfoglobaldefine
@@ -29,78 +34,52 @@ d_mfoglobaldefineextern std::map<std::string, uint64_t> mapuint64_t;
 d_mfoglobaldefineextern std::map<std::string, double> mapDouble;
 
 d_mfoglobaldefineextern int WiegelmannWeightType;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannWeightBound;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannWeightDivfree;
+d_mfoglobaldefineextern double WiegelmannWeightBound;
+d_mfoglobaldefineextern double WiegelmannWeightDivfree;
+d_mfoglobaldefineextern int WiegelmannBoundsCorrection;
 
-d_mfoglobaldefineextern int WiegelmannProcTimeoutMS;
-
-d_mfoglobaldefineextern int WiegelmannSynchronous;
-d_mfoglobaldefineextern int WiegelmannShowProgress;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannShowProgressTimeQuant;
-d_mfoglobaldefineextern int WiegelmannProtocolStep;
+d_mfoglobaldefineextern double WiegelmannInversionTolerance;
+d_mfoglobaldefineextern double WiegelmannInversionDenom;
 
 d_mfoglobaldefineextern int WiegelmannDerivStencil;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcStep0;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcUsePrev;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcPrevStepFactor;
+
+d_mfoglobaldefineextern double WiegelmannProcStep0;
 d_mfoglobaldefineextern int WiegelmannProcStepMax;
 d_mfoglobaldefineextern int WiegelmannProcMaxSteps;
 
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcStepIncr;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcStepIncrInit;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcStepIncrMatr;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcStepIncrMain;
+d_mfoglobaldefineextern double WiegelmannProcStepIncr;
+d_mfoglobaldefineextern double WiegelmannProcStepIncrInit;
+d_mfoglobaldefineextern double WiegelmannProcStepIncrMatr;
+d_mfoglobaldefineextern double WiegelmannProcStepIncrMain;
 
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcStepDecr;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcStepDecrInit;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcStepDecrMatr;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcStepDecrMain;
+d_mfoglobaldefineextern double WiegelmannProcStepDecr;
+d_mfoglobaldefineextern double WiegelmannProcStepDecrInit;
+d_mfoglobaldefineextern double WiegelmannProcStepDecrMatr;
+d_mfoglobaldefineextern double WiegelmannProcStepDecrMain;
 
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcStepLim;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcStepLimInit;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcStepLimMatr;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcStepLimMain;
+d_mfoglobaldefineextern double WiegelmannProcStepLim;
+d_mfoglobaldefineextern double WiegelmannProcStepLimInit;
+d_mfoglobaldefineextern double WiegelmannProcStepLimMatr;
+d_mfoglobaldefineextern double WiegelmannProcStepLimMain;
 
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcdLStop;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcdLStopInit;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcdLStopMatr;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcdLStopMain;
-
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcFunctionalLimit;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcFunctionalLimitInit;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcFunctionalLimitMatr;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcFunctionalLimitMain;
-
-d_mfoglobaldefineextern int WiegelmannProcdLIter;
-d_mfoglobaldefineextern int WiegelmannProcdLIterInit;
-d_mfoglobaldefineextern int WiegelmannProcdLIterMatr;
-d_mfoglobaldefineextern int WiegelmannProcdLIterMain;
+d_mfoglobaldefineextern double WiegelmannProcStepIncrFactor;
+d_mfoglobaldefineextern double WiegelmannProcStepDecrFactor;
 
 d_mfoglobaldefineextern int WiegelmannProcdLStdWin;
 d_mfoglobaldefineextern int WiegelmannProcdLStdWinInit;
 d_mfoglobaldefineextern int WiegelmannProcdLStdWinMatr;
 d_mfoglobaldefineextern int WiegelmannProcdLStdWinMain;
 
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcdLStdVal;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcdLStdValInit;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcdLStdValMatr;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannProcdLStdValMain;
+d_mfoglobaldefineextern double WiegelmannProcdLStdVal;
+d_mfoglobaldefineextern double WiegelmannProcdLStdValInit;
+d_mfoglobaldefineextern double WiegelmannProcdLStdValMatr;
+d_mfoglobaldefineextern double WiegelmannProcdLStdValMain;
 
 d_mfoglobaldefineextern int WiegelmannGetMetricsTheta;
-d_mfoglobaldefineextern int WiegelmannGetMetricsDiffInit;
-d_mfoglobaldefineextern int WiegelmannGetMetricsDiffPrev;
-
-//d_mfoglobaldefineextern int WiegelmannProcChromoZUse;
-//d_mfoglobaldefineextern int WiegelmannProcChromoZLevel;
-//d_mfoglobaldefineextern REALTYPE_A WiegelmannProcWeightAddRegular;
 
 d_mfoglobaldefineextern int WiegelmannMatryoshkaUse;
 d_mfoglobaldefineextern int WiegelmannMatryoshkaDeepMinN;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannMatryoshkaFactor;
-d_mfoglobaldefineextern CagmVectorFieldOps::Interpolator WiegelmannMatryoshkaInterpolator;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannMatryoshkaInterpolatorP1;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannMatryoshkaInterpolatorP2;
-d_mfoglobaldefineextern REALTYPE_A WiegelmannMatryoshkaInterpolatorP3;
+d_mfoglobaldefineextern double WiegelmannMatryoshkaFactor;
 
 d_mfoglobaldefineextern int WiegelmannProcCondType;
 d_mfoglobaldefineextern int WiegelmannProcCondAbs;
@@ -110,9 +89,40 @@ d_mfoglobaldefineextern int WiegelmannProcCondLOS;
 d_mfoglobaldefineextern int WiegelmannProcCondBase;
 d_mfoglobaldefineextern int WiegelmannProcCondBase2;
 
-d_mfoglobaldefineextern int WiegelmannChunkSizeMax;
-d_mfoglobaldefineextern int WiegelmannChunkSizeOpt;
-d_mfoglobaldefineextern int WiegelmannChunkTasks;
-d_mfoglobaldefineextern int WiegelmannThreadPriority;
+d_mfoglobaldefineextern int CommonThreadsN;
+d_mfoglobaldefineextern w_priority WiegelmannThreadPriority;
+
+d_mfoglobaldefineextern int WiegelmannProtocolStep;
+d_mfoglobaldefineextern int debug_input;
+
+d_mfoglobaldefineextern double Disambig_KTFactor_vp;
+d_mfoglobaldefineextern double Disambig_KTFactor_v0;
+d_mfoglobaldefineextern double Disambig_KTFactor_M;
+d_mfoglobaldefineextern double Disambig_KTFactor_p;
+d_mfoglobaldefineextern double Disambig_KTFactor_init;
+
+d_mfoglobaldefineextern double Disambig_ordpart;
+d_mfoglobaldefineextern int Disambig_limacc;
+d_mfoglobaldefineextern int Disambig_limatt;
+
+d_mfoglobaldefineextern double Disambig_temp_decr;
+d_mfoglobaldefineextern double Disambig_temp_min;
+d_mfoglobaldefineextern double Disambig_acc2att;
+d_mfoglobaldefineextern int Disambig_min_generation;
+
+d_mfoglobaldefineextern double Disambig_Bmax_term;
+d_mfoglobaldefineextern double Disambig_non_stable_term;
+
+d_mfoglobaldefineextern int Disambig_parallel;
+
+d_mfoglobaldefineextern int lines_conditions;
+d_mfoglobaldefineextern double lines_chromo_level;
+d_mfoglobaldefineextern double lines_step;
+d_mfoglobaldefineextern double lines_tolerance;
+d_mfoglobaldefineextern double lines_abs_bound_achieve;
+d_mfoglobaldefineextern double lines_rel_bound_achieve;
+d_mfoglobaldefineextern double lines_rel_seeds_bound;
+d_mfoglobaldefineextern int lines_n_loop_control;
+d_mfoglobaldefineextern double lines_loop_abs_cell;
 
 #undef d_mfoglobaldefineextern
