@@ -2,7 +2,7 @@
 
 See [Licence](https://github.com/Alexey-Stupishin/AMaFiL/blob/master/LICENCE.md)
 
-<!--- [doi:10.5281/zenodo.3896222](https://zenodo.org/record/3896222) --->
+[doi:10.5281/zenodo.3896222](https://zenodo.org/record/3896222)
 
 The repository contains:
 * sources of Magnetic Field Library (C++11)

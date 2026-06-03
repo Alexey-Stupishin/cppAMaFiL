@@ -30,3 +30,4 @@
 	* Calculation time for lines stored (for debugging)
 	* Memory requirement  estimation implemented (not fully tested)
 	* Disambiguation functionality implemented (not fully tested)
+* 03 June 2026 IDL and Python wrappers moved to separate repositories
