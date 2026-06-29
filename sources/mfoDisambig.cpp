@@ -1,8 +1,7 @@
 #include "stdDefinitions.h"
-#include <random>
-#include <chrono>
 
 #include "mfoDisambig.h"
+#include "Durstenfeld.h"
 
 #ifdef _WINDOWS
 #include "binUtilitiesW.h"
@@ -126,21 +125,6 @@ void DAMSupervisor::setData(int n_tasks, int chunk_lng, int n_poi, int *task_x, 
             rest -= lng;
             pos += lng;
         }
-    }
-}
-
-//-----------------------------------------------------------------------
-void CmfoDisambig::Durstenfeld(int n, int *x, int *y)
-{
-    std::random_device rd;
-    std::mt19937 gen(rd());
-
-    for (int k = n-1; k > 0; k--)
-    {
-        std::uniform_int_distribution<int> distrib(0, k);
-        int idx = distrib(gen);
-        int t = x[k]; x[k] = x[idx]; x[idx] = t;
-            t = y[k]; y[k] = y[idx]; y[idx] = t;
     }
 }
 

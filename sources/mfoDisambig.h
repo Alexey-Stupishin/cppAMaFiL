@@ -159,7 +159,6 @@ public:
     int process();
 
 protected:
-    static void Durstenfeld(int n, int *x, int *y);
     int get_F_state();
     int step_proceed();
     int get_order();

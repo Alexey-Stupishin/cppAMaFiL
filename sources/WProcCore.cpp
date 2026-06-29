@@ -1,15 +1,11 @@
 #include "stdDefinitions.h"
 
-//#include "MagFieldOps.h"
 #include "mfoGlobals.h"
 #include "agpWiegelmannPar.h"
 #include "agmRotate3D.h"
 #include "TimeTicToc.h"
 
-//#include "console_debug.h"
-//#include "debug_data_trace_win.h"
 #include "DebugWrite.h"
-//#include "WndDebug.h"
 
 #include "WProcCore.h"
 

@@ -210,8 +210,10 @@ void _proceedGlobals(bool bGet)
     mapDoubleProceed(bGet, "lines_abs_bound_achieve", lines_abs_bound_achieve, 1e-3);
     mapDoubleProceed(bGet, "lines_rel_bound_achieve", lines_rel_bound_achieve, 0);
     mapDoubleProceed(bGet, "lines_rel_seeds_bound", lines_rel_seeds_bound, 0);
-    mapIntProceed(bGet, "lines_n_loop_control", lines_n_loop_control, 200);
+    mapIntProceed   (bGet, "lines_n_loop_control", lines_n_loop_control, 200);
     mapDoubleProceed(bGet, "lines_loop_abs_cell", lines_loop_abs_cell, 1.5);
+    mapIntProceed   (bGet, "lines_internal_convert_indices", lines_internal_convert_indices, 1);
+    mapIntProceed(bGet, "lines_use_durstenfeld", lines_use_durstenfeld, 1);
 }
 
 //------------------------------------------------------------------

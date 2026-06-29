@@ -5,10 +5,10 @@
 
 //-------------------------------------------------------------------------
 #define VIR_Ver1 4
-#define VIR_Ver2 4
+#define VIR_Ver2 5
 #define VIR_Ver3 26
-#define VIR_Ver4 601
-#define VIR_Revision 61
+#define VIR_Ver4 627
+#define VIR_Revision 76
 #define VIR_Year 2026
 
 //-------------------------------------------------------------------------
@@ -19,7 +19,7 @@
 
 #ifdef _WINDOWS
 #define VIR_T_REV rev.
-#define VIR_T_LIBNAME : Weighted Wiegelmann NLFFF Reconstruction Library
+#define VIR_T_LIBNAME : Advanced Magnetic Field Library
 #define VIR_COPYRIGHT Copyright (C) Alexey G. Stupishin (agstup@yandex.ru)
 #define VIR_FROM , 2017-
 #else

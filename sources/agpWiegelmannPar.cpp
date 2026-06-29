@@ -5,8 +5,10 @@
 #include "agmScalarField.h"
 #include "agmVectorField.h"
 
-#include "WndDebug.h"
 #include "DebugWrite.h"
+#ifdef _WINDOWS
+#include "WndDebug.h"
+#endif
 
 //-----------------------------------------------------------------------
 CagpWiegelmann::CagpWiegelmann(int *_N, int _n_threads, int _stencil

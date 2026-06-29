@@ -20,6 +20,7 @@
     <ClCompile Include="..\..\Common\BaseMath\agmVectorFieldOps.cpp" />
     <ClCompile Include="..\..\Common\BaseMath\agmVectorFieldOpsLine.cpp" />
     <ClCompile Include="..\..\Common\BaseMath\agmVectorFieldOpsPoint.cpp" />
+    <ClCompile Include="..\..\Common\BaseMath\CubeXD.cpp" />
     <ClCompile Include="..\..\Common\Multithread\TaskQueueProcessor.cpp" />
     <ClCompile Include="..\..\Common\Multithread\TaskQueueProcessorProcessor.cpp" />
     <ClCompile Include="..\..\Common\Multithread\TaskQueueProcessorSupervisor.cpp" />
@@ -34,6 +35,7 @@
     <ClCompile Include="..\sources\agpWiegelmannPar.cpp" />
     <ClCompile Include="..\sources\DebugWrite.cpp" />
     <ClCompile Include="..\sources\LinesProcessor.cpp" />
+    <ClCompile Include="..\sources\LinesSupervisor.cpp" />
     <ClCompile Include="..\sources\MagFieldOps.cpp" />
     <ClCompile Include="..\sources\mfoDisambig.cpp" />
     <ClCompile Include="..\sources\mfoDisambigInterface.cpp" />
@@ -46,6 +48,9 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MagFieldOps.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\sources\LinesSupervisor.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C0751568-61B4-4FCD-B57F-7A86EF447797}</ProjectGuid>
@@ -95,7 +100,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>NDEBUG_DATA_TRACE;NDEBUG_CPP11THREAD;NUSE_UNIT_TEST;WIN32;_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\sources;..\..\common\BaseMath;..\..\common\BasePhysics;..\..\common\General;..\..\common\IDL;..\..\common\Multithread;..\..\common\Utils;..\..\common\WinUtils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\sources;..\..\common\BaseMath;..\..\common\General;..\..\common\IDL;..\..\common\Multithread;..\..\common\Utils;..\..\common\WinUtils</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -123,7 +128,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG_CPP11THREAD;WIN32;_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\sources;..\..\common\BaseMath;..\..\common\BasePhysics;..\..\common\General;..\..\common\IDL;..\..\common\Multithread;..\..\common\Utils;..\..\common\WinUtils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\sources;..\..\common\BaseMath;..\..\common\General;..\..\common\IDL;..\..\common\Multithread;..\..\common\Utils;..\..\common\WinUtils</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>

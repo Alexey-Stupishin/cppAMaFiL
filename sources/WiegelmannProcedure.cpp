@@ -8,8 +8,11 @@
 #include "console_debug.h"
 #include "debug_data_trace_win.h"
 #include "DebugWrite.h"
-#include "WndDebug.h"
 #include "WProcCore.h"
+
+#ifdef _WINDOWS
+#include "WndDebug.h"
+#endif
 
 uint32_t mfoWiegelmannProcedureCore(CagmVectorField *field, CagmScalarField *weight, 
     CagmVectorField *baseField, CagmVectorField *baseWeight, CagmVectorField *baseField2, CagmVectorField *baseWeight2,

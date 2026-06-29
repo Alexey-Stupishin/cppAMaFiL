@@ -1,14 +1,40 @@
 #include "stdDefinitions.h"
+
 #include "mfoGlobals.h"
 
 #include "MagFieldOps.h"
-//#include "NLFFFLinesTaskQueue.h"
-#include "LinesTaskProcessor11.h"
 #include "LinesProcessor.h"
+#include "LinesTask.h"
 #include "agmRKF45.h"
 
 #include "console_debug.h"
 #include "DebugWrite.h"
+
+static void internal_convert_indices(CubeXD *cube,
+    int *status, double *physLength, double *avField,
+    int *startIdx, int *endIdx, int *apexIdx, int *seedIdx,
+    int *codes, double *times)
+{
+    if (status)
+        cube->transposeXY(status);
+    if (physLength)
+        cube->transposeXY(physLength);
+    if (avField)
+        cube->transposeXY(avField);
+    if (codes)
+        cube->transposeXY(codes);
+    if (times)
+        cube->transposeXY(times);
+
+    if (startIdx)
+        cube->transposeIDXY(startIdx);
+    if (endIdx)
+        cube->transposeIDXY(endIdx);
+    if (apexIdx)
+        cube->transposeIDXY(apexIdx);
+    if (seedIdx)
+        cube->transposeIDXY(seedIdx);
+}
 
 __declspec(dllexport) uint32_t mfoGetLinesV(CagmVectorField *v,
     uint32_t _cond, double chromoLevel,
@@ -30,7 +56,7 @@ __declspec(dllexport) uint32_t mfoGetLinesV(CagmVectorField *v,
 
     LQPTaskFactory factory;
     LQPSupervisor *supervisor = new LQPSupervisor(v, _cond, chromoLevel,
-        _seeds, _Nseeds, relSeedsBound,
+        _seeds, _Nseeds, relSeedsBound, lines_use_durstenfeld,
         _voxelStatus, _physLength, _avField,
         _linesLength, _codes, _times,
         _startIdx, _endIdx, _apexIdx,
@@ -38,21 +64,22 @@ __declspec(dllexport) uint32_t mfoGetLinesV(CagmVectorField *v,
 
     std::vector<ATQPProcessor *> processors;
     for (int i = 0; i < nProc; i++)
-        processors.push_back(new LQPProcessor(supervisor, i, v, 0, step, tolerance, 0
+        processors.push_back(new LQPProcessor(supervisor, i, v, _cond, chromoLevel, 0, step, tolerance, 0
             , absBoundAchieve, relBoundAchieve, maxResult, _voxelStatus, proc.get_sync(), _n_loop_control, loop_abs_cell));
 
     proc.proceed(processors, supervisor, w_priority::low);
 
     console_debug("end of proceed")
 
+    uint64_t cumLength;
+    int nLines, nPassed, nNonStored;
+    supervisor->getFinalState(&cumLength, &nLines, &nPassed, &nNonStored);
     if (_totalLength)
-        *_totalLength = supervisor->queue->cumLength;
+        *_totalLength = cumLength;
     if (_nLines)
-        *_nLines = supervisor->queue->nLines;
+        *_nLines = nLines;
     if (_nPassed)
-        *_nPassed = supervisor->queue->nPassed;
-
-    int ns = supervisor->queue->nNonStored;
+        *_nPassed = nPassed;
 
     console_debug("end of assign")
 
@@ -64,17 +91,17 @@ __declspec(dllexport) uint32_t mfoGetLinesV(CagmVectorField *v,
     DebugWriteData(v, "debug_lines_field");
     DebugWriteLines(v, "debug_lines", 
         _seeds, _Nseeds,
-        supervisor->queue->nLines, supervisor->queue->nPassed,
+        nLines, nPassed,
         _voxelStatus, _physLength, _avField, 
         _linesLength, _codes,
         _startIdx, _endIdx, _apexIdx,
-        supervisor->queue->cumLength, _coords, _linesStart, _linesIndex, seedIdx);
+        cumLength, _coords, _linesStart, _linesIndex, seedIdx);
 
     delete supervisor;
 
     console_debug("supervisor deleted")
 
-    return ns;
+    return nNonStored;
 }
 
 __declspec(dllexport) uint32_t mfoGetLines(int *N,
@@ -145,6 +172,12 @@ __declspec(dllexport) uint32_t mfoGetLinesP(int *N,
         linesLength, codes,
         startIdx, endIdx, apexIdx,
         maxCoordLength, totalLength, coord, linesStart, linesIndex, seedIdx, times);
+
+    if (!seeds && lines_internal_convert_indices)
+        internal_convert_indices(v, 
+                                 status, physLength, avField,
+                                 startIdx, endIdx, apexIdx, seedIdx,
+                                 codes, times);
 
     delete v;
 
