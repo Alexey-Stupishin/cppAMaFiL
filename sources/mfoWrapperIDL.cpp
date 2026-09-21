@@ -40,7 +40,12 @@ int mfoNLFFF(int argc, void* argv[])
 
     CidlPassParameterMap *m = (CidlPassParameterMap *)argv[0];
     if (m->parse(&mapInt, &mapuint64_t, &mapDouble) != 0)
-        return LIB_STATE_NO_PARAMETER;
+    {
+        int ignore;
+        int exist = utilGetInt("ignore_extra_parameters", &ignore);
+        if (exist == 0 || ignore != 1)
+            return LIB_STATE_NO_PARAMETER;
+    }
     _proceedGlobals();
 
     int *N = (int *)argv[1];
@@ -235,9 +240,13 @@ int mfoLines(int /* argc */, void* argv[])
     int c = 0;
     CidlPassParameterMap *m = (CidlPassParameterMap *)argv[c++];
     if (m->parse(&mapInt, &mapuint64_t, &mapDouble) != 0)
-        return LIB_STATE_NO_PARAMETER;
+    {
+        int ignore;
+        int exist = utilGetInt("ignore_extra_parameters", &ignore);
+        if (exist == 0 || ignore != 1)
+            return LIB_STATE_NO_PARAMETER;
+    }
     _proceedGlobals();
-
     
     int *N = (int *)argv[c++];
     double *Bx = (double *)argv[c++];

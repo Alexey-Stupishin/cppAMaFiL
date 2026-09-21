@@ -99,7 +99,8 @@ __declspec( dllexport ) int utilSetInt(char *query, int value)
 //------------------------------------------------------------------
 __declspec( dllexport ) int utilGetInt(char *query, int *result)
 { 
-    return mapIntProceed(true, query, *result, 0);
+    bool exists = mapIntProceed(true, query, *result, 0);
+    return (exists ? 1 : 0);
 }
 
 //------------------------------------------------------------------
@@ -113,7 +114,8 @@ __declspec( dllexport ) int utilSetDouble(char *query, double value)
 //------------------------------------------------------------------
 __declspec( dllexport ) int utilGetDouble(char *query, double *result)
 { 
-    return mapDoubleProceed(true, query, *result, 0);
+    bool exists = mapDoubleProceed(true, query, *result, 0);
+    return (exists ? 1 : 0);
 }
 
 //------------------------------------------------------------------
@@ -127,6 +129,8 @@ __declspec( dllexport ) int utilSetSetting(char *query, double value)
 //------------------------------------------------------------------
 void _proceedGlobals(bool bGet)
 {
+    mapIntProceed   (bGet, "ignore_extra_parameters", ignore_extra_parameters, 0);
+
     mapIntProceed   (bGet, "n_processes", CommonThreadsN, 0);
 
     int wp;

@@ -33,6 +33,8 @@ d_mfoglobaldefineextern std::map<std::string, int> mapInt;
 d_mfoglobaldefineextern std::map<std::string, uint64_t> mapuint64_t;
 d_mfoglobaldefineextern std::map<std::string, double> mapDouble;
 
+d_mfoglobaldefineextern int ignore_extra_parameters;
+
 d_mfoglobaldefineextern int WiegelmannWeightType;
 d_mfoglobaldefineextern double WiegelmannWeightBound;
 d_mfoglobaldefineextern double WiegelmannWeightDivfree;
