@@ -224,11 +224,9 @@ uint32_t LQPSupervisor::proceedLine(uint32_t queueID, LQPLineResult *line, int _
 
     if (line->useful)
     {
-        if (((line->status & Status::Closed) && (cond & Conditions::PassClosed)) || (!(line->status & Status::Closed) && (cond & Conditions::PassOpen)))
-        {
-            for (int k = line->start; k <= line->end; k++)
-                proceedVox(line->indices[k], line->status, line->phys_length, line->av_field, line->apex_idx, line->seed_idx, line->start_idx, line->end_idx);
-        }
+        bool mark_passed = ((line->status & Status::Closed) && (cond & Conditions::PassClosed)) || (!(line->status & Status::Closed) && (cond & Conditions::PassOpen));
+        for (int k = line->start; k <= line->end; k++)
+            proceedVox(line->indices[k], line->status, line->phys_length, line->av_field, line->apex_idx, line->seed_idx, line->start_idx, line->end_idx, mark_passed);
         voxelStatus[queueID] |= Status::BaseVoxel;
 
         nPassed++;
@@ -269,7 +267,7 @@ uint32_t LQPSupervisor::proceedLine(uint32_t queueID, LQPLineResult *line, int _
 }
 
 //-------------------------------------------------------------------------------
-uint32_t LQPSupervisor::proceedThisVox(int queueID, int sClosed, double thisPhysLength, double thisAvField, int apexid, int seedid, int startid, int endid)
+uint32_t LQPSupervisor::proceedThisVox(int queueID, int sClosed, double thisPhysLength, double thisAvField, int apexid, int seedid, int startid, int endid, bool mark_passed)
 {
     if (voxelStatus)
         voxelStatus[queueID] |= Status::Processed | Status::Lined | sClosed;
@@ -288,21 +286,22 @@ uint32_t LQPSupervisor::proceedThisVox(int queueID, int sClosed, double thisPhys
     if (endIdx)
         endIdx[queueID] = endid;
 
-    passed[queueID] = true;
+    if (passed)
+        passed[queueID] = mark_passed;
 
     return 0;
 }
 
 //-------------------------------------------------------------------------------
-uint32_t LQPSupervisor::proceedVox(int queueID, int sClosed, double thisPhysLength, double thisAvField, int apexid, int seedid, int startid, int endid)
+uint32_t LQPSupervisor::proceedVox(int queueID, int sClosed, double thisPhysLength, double thisAvField, int apexid, int seedid, int startid, int endid, bool mark_passed)
 {
     if (autoParams)
-        return proceedThisVox(queueID, sClosed, thisPhysLength, thisAvField, apexid, seedid, startid, endid);
+        return proceedThisVox(queueID, sClosed, thisPhysLength, thisAvField, apexid, seedid, startid, endid, mark_passed);
 
     for (int k = 0; k < Nseeds; k++)
     {
         if (globalID[k] == queueID)
-            proceedThisVox(k, sClosed, thisPhysLength, thisAvField, apexid, seedid, startid, endid);
+            proceedThisVox(k, sClosed, thisPhysLength, thisAvField, apexid, seedid, startid, endid, mark_passed);
     }
 
     return 0;
