@@ -1,6 +1,6 @@
 # Advanced Magnetic Field library
 
-See [Licence](https://github.com/Alexey-Stupishin/AMaFiL/blob/master/LICENCE.md)
+See [Licence](https://github.com/Alexey-Stupishin/cppAMaFiL/blob/master/LICENCE.md)
 
 [doi:10.5281/zenodo.3896222](https://zenodo.org/record/3896222)
 
@@ -15,7 +15,7 @@ Wrappers for the library are implemented in:
 * IDL ([idlAMaFiL](https://github.com/Alexey-Stupishin/idlAMaFiL)). idlAMaFiL used as submodule of [GX-simulator](https://github.com/Gelu-Nita/GX_SIMULATOR) package, which included in [Solar Soft](http://www.lmsal.com/solarsoft/sswdoc/sswdoc_jtop.html) environment.
 * Python ([pyAMaFiL](https://github.com/Alexey-Stupishin/pyAMaFiL)). Porting to the ([pyAMPP](https://github.com/suncast-org/pyAMPP)) in progress.
 
-This repository contains submodule [CPP-Common](https://github.com/Alexey-Stupishin/CPP-Common).
+This repository contains submodule [common](https://github.com/Alexey-Stupishin/CPP-Common).
 
 Working with submodules can be found [here](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
 
@@ -25,7 +25,7 @@ Working with submodules can be found [here](https://git-scm.com/book/en/v2/Git-T
 * _/Windows_ - MSVC project for Windows (Visual Studio 2015)
 * _/Linux_ - makefile (g++) for Linux
 
-see [Changelog](https://github.com/Alexey-Stupishin/AMaFiL/blob/master/CHANGELOG.md) for history update
+see [Changelog](https://github.com/Alexey-Stupishin/cppAMaFiL/blob/master/CHANGELOG.md) for history update
 
 ## References
 For NLFFF weighted method please refer to:

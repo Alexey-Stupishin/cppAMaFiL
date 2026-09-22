@@ -24,10 +24,13 @@
 * 04 December 2023 (v 3.4.23.1203, rev. 797) - One-footpoint-line status bit added
 * 01 June 2024 (v 4.0.24.601, rev. 837) - Major update
 * 11 June 2024 (v 4.0.24.611, rev. 839) - Polishing
-* 01 June 2026 (v 4.4.24.601, rev. 61)
+* 01 June 2026 (v 4.4.26.601, rev. 61)
 	* Refactoring, reorganization, polishing
 	* Non-physical lines don't calculated (time reducing)
 	* Calculation time for lines stored (for debugging)
 	* Memory requirement  estimation implemented (not fully tested)
 	* Disambiguation functionality implemented (not fully tested)
 * 03 June 2026 IDL and Python wrappers moved to separate repositories
+* 22 September 2026 (v 4.6.26.622, rev. 81)
+	* Lines indexes internal sorting
+	* Bug fixing, polishing
