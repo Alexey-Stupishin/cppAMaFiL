@@ -94,7 +94,7 @@ private:
 
     void getDivPoint(double *p1, double *p2);
 
-    uint32_t LQPSupervisor::proceedLine(uint32_t queueID, LQPLineResult *line, int _code4over, double time);
+    uint32_t proceedLine(uint32_t queueID, LQPLineResult *line, int _code4over, double time);
 
     uint32_t proceedThisVox(int queueID, int sClosed, double thisPhysLength, double thisAvField, int apexid, int seedid, int startid, int endid, bool mark_passed);
     uint32_t proceedVox(int queueID, int sClosed, double thisPhysLength, double thisAvField, int apexid, int seedid, int startid, int endid, bool mark_passed);
