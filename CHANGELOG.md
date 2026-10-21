@@ -34,3 +34,4 @@
 * 22 September 2026 (v 4.6.26.622, rev. 81)
 	* Lines indexes internal sorting
 	* Bug fixing, polishing
+* 21 October 2026 (v 4.6.26.1021, rev. 82) - bug fixing

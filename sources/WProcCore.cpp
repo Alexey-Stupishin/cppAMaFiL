@@ -47,8 +47,8 @@ int CWProcCore::proceedDL(double relL)
 //--------------------------------------------------------------------
 double CWProcCore::init_step()
 {
-    FILE *fid = fopen("c:\\temp\\start.txt", "wb");
-    fprintf(fid, "%f %f\r\n", step, L0);
+//    FILE *fid = fopen("c:\\temp\\start.txt", "wb");
+//    fprintf(fid, "%f %f\r\n", step, L0);
 
     double xL = 0, xC = step, xR = step;
     double yL = L0, yC = L0, yR = L0;
@@ -62,7 +62,7 @@ double CWProcCore::init_step()
         L = proc->step(iterN);
         iterN++;
 
-        fprintf(fid, "%f %f\r\n", step, L);
+//        fprintf(fid, "%f %f\r\n", step, L);
 
         if (L < yL)
         {
@@ -87,7 +87,7 @@ double CWProcCore::init_step()
             store_field();
         }
     }
-    fclose(fid);
+//   fclose(fid);
 
     double v1, v2, v3;
     v1 = yL*(xC-xR);
