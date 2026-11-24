@@ -10,6 +10,7 @@ public:
     int end_idx;
     int code;
     double phys_length;
+    double length_to_start;
     double av_field;
     int closed;
     int start, end;
@@ -30,6 +31,7 @@ public:
         end_idx = 0;
         code = 0;
         phys_length = 0;
+        length_to_start = 0;
         av_field = 0;
         closed = 0;
         start = 0;

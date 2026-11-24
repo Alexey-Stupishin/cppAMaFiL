@@ -185,6 +185,9 @@ uint32_t LQPProcessor::proceedLine(int resLength, int _code)
                     distance[k] = distance[k - 1] + dist;
                     Blng += (Bprev + B)*0.5*dist;
 
+                    if (k == kPoint)
+                        line.length_to_start = distance[k];
+
                     Bprev = B;
                 }
 
