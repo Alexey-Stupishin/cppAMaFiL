@@ -35,3 +35,4 @@
 	* Lines indexes internal sorting
 	* Bug fixing, polishing
 * 21 October 2026 (v 4.6.26.1021, rev. 82) - bug fixing
+* 27 November 2026 (v 4.6.26.1127, rev. 85) - Add length to line start
