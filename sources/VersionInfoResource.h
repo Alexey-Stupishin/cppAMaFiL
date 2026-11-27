@@ -5,10 +5,10 @@
 
 //-------------------------------------------------------------------------
 #define VIR_Ver1 4
-#define VIR_Ver2 6
+#define VIR_Ver2 7
 #define VIR_Ver3 26
-#define VIR_Ver4 1021
-#define VIR_Revision 82
+#define VIR_Ver4 1127
+#define VIR_Revision 84
 #define VIR_Year 2026
 
 //-------------------------------------------------------------------------

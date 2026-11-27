@@ -41,7 +41,7 @@ private:
 
     // Caller allocated!
     // length = Nseeds, 1-D
-    double *physLength, *avField;
+    double *physLength, *physLengthToStart, *avField;
     int *startIdx, *endIdx, *apexIdx;
     int *codes;
     double *times;
@@ -72,7 +72,7 @@ public:
     LQPSupervisor(CagmVectorField *v,
         uint32_t _cond, double chromoLevel,
         double *_seeds, int _Nseeds, double relSeedsBound, int lines_use_durstenfeld,
-        int *_voxelStatus, double *_physLength, double *_avField,
+        int *_voxelStatus, double *_physLength, double *_physLengthToStart, double *_avField,
         int *_linesLength, int *_codes, double *_times,
         int *_startIdx, int *_endIdx, int *_apexIdx,
         uint64_t _maxCoordLength, double *_coords, uint64_t *_linesStart, int *_linesIndex, int *seedIdx,
@@ -96,6 +96,8 @@ private:
 
     uint32_t proceedLine(uint32_t queueID, LQPLineResult *line, int _code4over, double time);
 
-    uint32_t proceedThisVox(int queueID, int sClosed, double thisPhysLength, double thisAvField, int apexid, int seedid, int startid, int endid, bool mark_passed);
-    uint32_t proceedVox(int queueID, int sClosed, double thisPhysLength, double thisAvField, int apexid, int seedid, int startid, int endid, bool mark_passed);
+    //uint32_t proceedThisVox(int queueID, int sClosed, double thisPhysLength, double thisAvField, int apexid, int seedid, int startid, int endid, bool mark_passed);
+    //uint32_t proceedVox(int queueID, int sClosed, double thisPhysLength, double thisAvField, int apexid, int seedid, int startid, int endid, bool mark_passed);
+    uint32_t proceedThisVox(int queueID, LQPLineResult *, bool mark_passed);
+    uint32_t proceedVox(int queueID, LQPLineResult *, bool mark_passed);
 };

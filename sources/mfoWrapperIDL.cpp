@@ -255,6 +255,7 @@ int mfoLines(int /* argc */, void* argv[])
 
     int *status = (int *)argv[c++];
     double *physLength = (double *)argv[c++];
+    double *physLengthToStart = (double *)argv[c++];
     double *avField = (double *)argv[c++];
     int *startIdx = (int *)argv[c++];
     int *endIdx = (int *)argv[c++];
@@ -285,7 +286,7 @@ int mfoLines(int /* argc */, void* argv[])
     return mfoGetLinesP(N, Bx, By, Bz,
         seeds, Nseeds,
         nLines, nPassed,
-        status, physLength, avField,
+        status, physLength, physLengthToStart, avField,
         linesLength, codes,
         startIdx, endIdx, apexIdx,
         maxLength, totalLength, coord, linesStart, linesIndex, seedIdx, times);
